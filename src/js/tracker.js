@@ -1609,19 +1609,31 @@
 				helpers.addEventListener(windowAlias, 'resize', activityHandler);
 				helpers.addEventListener(windowAlias, 'focus', activityHandler);
 				helpers.addEventListener(windowAlias, 'blur', activityHandler);
-
-				// Periodic check for activity.
-				lastActivityTime = now.getTime();
 			}
 
-			if (activityTrackingConfig.activityTrackingEnabled && pagePingInterval === null && activityTrackingInstalled) {
+			// Periodic check for activity.
+			lastActivityTime = now.getTime();
+
+			//Clear page ping heartbeat on new page view
+			if (pagePingInterval !== null) {
+				clearTimeout(pagePingInterval);
+				pagePingInterval = null;
+			}
+
+			if (activityTrackingConfig.activityTrackingEnabled && activityTrackingInstalled) {
 				pagePingInterval = activityInterval({
 					...activityTrackingConfig,
 					callback: args => logPagePing({ context: finalizeContexts(context, contextCallback), ...args }) // Grab the min/max globals
 				});
 			}
 
-			if (activityTrackingCallbackConfig.activityTrackingEnabled && pagePingCallbackInterval === null && activityTrackingInstalled) {
+			//Clear page ping heartbeat on new page view
+			if (pagePingCallbackInterval !== null) {
+				clearTimeout(pagePingCallbackInterval);
+				pagePingCallbackInterval = null;
+			}
+
+			if (activityTrackingCallbackConfig.activityTrackingEnabled && activityTrackingInstalled) {
 				pagePingCallbackInterval = activityInterval(activityTrackingCallbackConfig);
 			}
 		}
